@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.16.0 -->
+<interface>
+  <!-- interface-name builder.ui -->
+  <requires lib="gtk" version="4.12"/>
+  <object class="GtkWindow" id="window">
+    <property name="title">Power Manager</property>
+    <child>
+      <object class="GtkGrid" id="grid">
+        <property name="column-homogeneous">True</property>
+        <property name="column-spacing">5</property>
+        <property name="row-spacing">5</property>
+        <child>
+          <object class="GtkLabel" id="pwrcnflabel">
+            <property name="justify">center</property>
+            <property name="label">Power Mode Configuration</property>
+            <property name="use-underline">True</property>
+            <property name="visible">1</property>
+            <property name="xalign">0.5</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="pwrstatelabel">
+            <property name="label">Current Power Mode:</property>
+            <property name="visible">1</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="btnIntelligentCooling">
+            <property name="hexpand">True</property>
+            <property name="label">Intelligent Cooling</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">2</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="btnExtremePerformance">
+            <property name="label">Extreme Performance</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">2</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="btnBatterySaving">
+            <property name="label">Battery Saving</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="row">2</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
