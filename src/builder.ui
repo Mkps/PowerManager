@@ -34,6 +34,16 @@
           </object>
         </child>
         <child>
+          <object class="GtkLabel" id="currentPwrMode">
+            <property name="label">Current Power Mode:</property>
+            <property name="visible">1</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
           <object class="GtkButton" id="btnIntelligentCooling">
             <property name="hexpand">True</property>
             <property name="label">Intelligent Cooling</property>

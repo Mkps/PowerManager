@@ -1,11 +1,81 @@
 #include "Power.h"
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
-
+#include <stdio.h>
+#include <fcntl.h>
 enum e_powerstate {IC = 0, EP, BS};
+
+static const char	*query_acpi_info(const char *r_value)
+{
+  int fd;
+  FILE *file;
+  char *value;
+  int ret;
+
+  value = calloc(51, sizeof(char));
+  // Open /proc/acpi/call for writing with elevated privileges
+  file = fopen("/proc/acpi/call", "w");
+  if (file == NULL) {
+      perror("Error opening /proc/acpi/call");
+      return (NULL);
+  }
+
+  // Write the value to the file
+  if (fprintf(file, "%s", r_value) < 0) {
+      perror("Error writing to /proc/acpi/call");
+      fclose(file);
+      return (NULL);
+  }
+
+  // Close the file
+  fclose(file);
+  fd = open("/proc/acpi/call", 0, O_RDONLY);
+  if (fd == -1)
+  {
+	perror("error opening /proc/acpi/call");
+	return (NULL);
+  }
+  ret = read(fd, value, 50);
+  if (!ret)
+  {
+	  perror ("error reading from /proc/acpi/call");
+	  close(fd);
+	  return (NULL);
+  }
+  return (value);
+}
+
+static const char	*query_PwrMode_info(void)
+{
+  const char *value = query_acpi_info("\\_SB.PCI0.LPC0.EC0.SPMO");
+  if (!strncmp("0x0", value, 4))
+  {
+	  free((char *)value);
+	  return ("Intelligent Cooling");
+  }
+  else if (!strncmp("0x1", value, 4))
+  {
+	  free((char *)value);
+	  return ("Extreme Performance");
+  }
+  else if (!strncmp("0x2", value, 4))
+  {
+	  free((char *)value);
+	  return ("Battery Saving");
+  }
+  else
+	  return ("Cannot determine Power Mode");
+}
+
+void update_PwrMode_text(GtkLabel *label)
+{
+    const char *acpi_info = query_PwrMode_info();
+    gtk_label_set_text(label, acpi_info);
+}
 
 static void set_IC(GtkWidget *widget, gpointer data)
 {
+  GObject *label = (GObject *)data;
   g_print ("Intelligent Cooling Mode Activated\n");
   FILE *file;
   const char *value = "\\_SB.PCI0.LPC0.EC0.VPC0.DYTC 0x000FB001";
@@ -26,7 +96,7 @@ static void set_IC(GtkWidget *widget, gpointer data)
 
   // Close the file
   fclose(file);
-
+  update_PwrMode_text(GTK_LABEL(label));
   (void)widget;
   (void)data;
 }
@@ -35,6 +105,7 @@ static void
 set_EP(GtkWidget *widget,
              gpointer   data)
 {
+  GObject *label = (GObject *)data;
   g_print ("Extreme Performance Mode Activated\n");
   FILE *file;
   const char *value = "\\_SB.PCI0.LPC0.EC0.VPC0.DYTC 0x0012B001";
@@ -55,6 +126,7 @@ set_EP(GtkWidget *widget,
 
   // Close the file
   fclose(file);
+  update_PwrMode_text(GTK_LABEL(label));
   (void)widget;
   (void)data;
 }
@@ -63,6 +135,7 @@ static void
 set_BS(GtkWidget *widget,
              gpointer   data)
 {
+  GObject *label = (GObject *)data;
   g_print ("Battery Saving mode activated\n");
   FILE *file;
   const char *value = "\\_SB.PCI0.LPC0.EC0.VPC0.DYTC 0x0013B001";
@@ -83,6 +156,7 @@ set_BS(GtkWidget *widget,
 
   // Close the file
   fclose(file);
+  update_PwrMode_text(GTK_LABEL(label));
   (void)widget;
   (void)data;
 }
@@ -104,17 +178,20 @@ activate (GtkApplication *app,
 
   /* Connect signal handlers to the constructed widgets. */
   GObject *window = gtk_builder_get_object (builder, "window");
+  GObject *label = gtk_builder_get_object (builder, "currentPwrMode");
+  gtk_window_set_default_size(GTK_WINDOW(window), 300, 100);
   gtk_window_set_application (GTK_WINDOW (window), app);
 
   GObject *button = gtk_builder_get_object (builder, "btnIntelligentCooling");
-  g_signal_connect (button, "clicked", G_CALLBACK (set_IC), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (set_IC), label);
 
   button = gtk_builder_get_object (builder, "btnExtremePerformance");
-  g_signal_connect (button, "clicked", G_CALLBACK (set_EP), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (set_EP), label);
 
   button = gtk_builder_get_object (builder, "btnBatterySaving");
-  g_signal_connect (button, "clicked", G_CALLBACK (set_BS), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (set_BS), label);
 
+  update_PwrMode_text(GTK_LABEL(label));
   //button = gtk_builder_get_object (builder, "quit");
   //g_signal_connect_swapped (button, "clicked", G_CALLBACK (quit_cb), window);
   (void)quit_cb;
@@ -131,8 +208,7 @@ main (int   argc,
 #ifdef GTK_SRCDIR
   g_chdir (GTK_SRCDIR);
 #endif
-
-  GtkApplication *app = gtk_application_new ("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
+  GtkApplication *app = gtk_application_new ("org.gtk.PowerManager", G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
 
   int status = g_application_run (G_APPLICATION (app), argc, argv);
