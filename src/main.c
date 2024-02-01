@@ -48,6 +48,8 @@ static const char	*query_acpi_info(const char *r_value)
 static const char	*query_PwrMode_info(void)
 {
   const char *value = query_acpi_info("\\_SB.PCI0.LPC0.EC0.SPMO");
+  if (!value)
+	  return ("Cannot determine Power Mode");
   if (!strncmp("0x0", value, 4))
   {
 	  free((char *)value);
@@ -69,8 +71,7 @@ static const char	*query_PwrMode_info(void)
 
 void update_PwrMode_text(GtkLabel *label)
 {
-    const char *acpi_info = query_PwrMode_info();
-    gtk_label_set_text(label, acpi_info);
+    gtk_label_set_text(label, query_PwrMode_info());
 }
 
 static void set_IC(GtkWidget *widget, gpointer data)
