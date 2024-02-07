@@ -1,0 +1,2 @@
+This file is used to keep track of past version.
+-opti. Tried opening /proc/acpi/call in a single fd to allow me to cut down on access time. Unfortunately, /proc/acpi/call seems to need to be opened after each change
