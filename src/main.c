@@ -1,8 +1,4 @@
-#include "Power.h"
-#include <gtk/gtk.h>
-#include <glib/gstdio.h>
-#include <stdio.h>
-#include <fcntl.h>
+#include "power_manager.h"
 enum e_powerstate {IC = 0, EP, BS};
 
 static const char	*query_acpi_info(const char *r_value)
@@ -102,9 +98,7 @@ static void set_IC(GtkWidget *widget, gpointer data)
   (void)data;
 }
 
-static void
-set_EP(GtkWidget *widget,
-             gpointer   data)
+static void set_EP(GtkWidget *widget, gpointer   data)
 {
   GObject *label = (GObject *)data;
   g_print ("Extreme Performance Mode Activated\n");
@@ -132,9 +126,7 @@ set_EP(GtkWidget *widget,
   (void)data;
 }
 
-static void
-set_BS(GtkWidget *widget,
-             gpointer   data)
+static void set_BS(GtkWidget *widget, gpointer   data)
 {
   GObject *label = (GObject *)data;
   g_print ("Battery Saving mode activated\n");
@@ -160,6 +152,12 @@ set_BS(GtkWidget *widget,
   update_PwrMode_text(GTK_LABEL(label));
   (void)widget;
   (void)data;
+}
+
+static void switch_battery_mode(GtkWidget *widget, gpointer data)
+{
+    (void)widget;
+    (void)data;
 }
 
 static void
@@ -193,6 +191,8 @@ activate (GtkApplication *app,
   g_signal_connect (button, "clicked", G_CALLBACK (set_BS), label);
 
   update_PwrMode_text(GTK_LABEL(label));
+  button = gtk_builder_get_object (builder, "btnBatteryState");
+  g_signal_connect (button, "clicked", G_CALLBACK (switch_battery_mode), NULL);
   //button = gtk_builder_get_object (builder, "quit");
   //g_signal_connect_swapped (button, "clicked", G_CALLBACK (quit_cb), window);
   (void)quit_cb;
@@ -203,8 +203,7 @@ activate (GtkApplication *app,
 }
 
 int
-main (int   argc,
-      char *argv[])
+main (int   argc, char *argv[])
 {
 #ifdef GTK_SRCDIR
   g_chdir (GTK_SRCDIR);

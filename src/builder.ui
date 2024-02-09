@@ -71,6 +71,50 @@
             </layout>
           </object>
         </child>
+        <child>
+          <object class="GtkLabel" id="battery_cnf_label">
+            <property name="justify">center</property>
+            <property name="label">Battery Configuration</property>
+            <property name="use-underline">True</property>
+            <property name="visible">1</property>
+            <property name="xalign">0.5</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">3</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="battery_label">
+            <property name="justify">center</property>
+            <property name="label">Battery Mode</property>
+            <property name="use-underline">False</property>
+            <property name="visible">1</property>
+            <property name="xalign">0.5</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">4</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="btnBatteryConservation">
+            <property name="label">Battery Conservation</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">4</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="btnRapidCharge">
+            <property name="label">Rapid Charge</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="row">4</property>
+            </layout>
+          </object>
+        </child>
       </object>
     </child>
   </object>
