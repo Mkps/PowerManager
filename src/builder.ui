@@ -98,7 +98,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkToggleButton" id="btnBatteryConservation">
+          <object class="GtkToggleButton" id="btnBatteryBC">
             <property name="label">Battery Conservation</property>
             <layout>
               <property name="column">1</property>
@@ -107,7 +107,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkToggleButton" id="btnRapidCharge">
+          <object class="GtkToggleButton" id="btnBatteryRC">
             <property name="label">Rapid Charge</property>
             <layout>
               <property name="column">2</property>
