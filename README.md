@@ -12,6 +12,7 @@ Simply launch the application and navigate through the intuitive user interface 
 ## Contributing
 Contributions to PowerManager for Lenovo Ideapad are welcome!
 ## Credits
+GUI made with GTK 4.0. https://www.gtk.org/ - LGPL 2.1 or newer.
 This project draws inspiration from the original Lenovo Vantage application and acknowledges the valuable information provided by the Arch Linux Wiki.
 
 ## License
