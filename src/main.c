@@ -1,8 +1,4 @@
-#include "Power.h"
-#include <gtk/gtk.h>
-#include <glib/gstdio.h>
-#include <stdio.h>
-#include <fcntl.h>
+#include "power_manager.h"
 enum e_powerstate {IC = 0, EP, BS};
 
 static const char	*query_acpi_info(const char *r_value)
@@ -102,9 +98,7 @@ static void set_IC(GtkWidget *widget, gpointer data)
   (void)data;
 }
 
-static void
-set_EP(GtkWidget *widget,
-             gpointer   data)
+static void set_EP(GtkWidget *widget, gpointer   data)
 {
   GObject *label = (GObject *)data;
   g_print ("Extreme Performance Mode Activated\n");
@@ -132,9 +126,7 @@ set_EP(GtkWidget *widget,
   (void)data;
 }
 
-static void
-set_BS(GtkWidget *widget,
-             gpointer   data)
+static void set_BS(GtkWidget *widget, gpointer   data)
 {
   GObject *label = (GObject *)data;
   g_print ("Battery Saving mode activated\n");
@@ -160,6 +152,114 @@ set_BS(GtkWidget *widget,
   update_PwrMode_text(GTK_LABEL(label));
   (void)widget;
   (void)data;
+}
+
+static int is_rc_on(void)
+{
+    const char *acpi_mode;
+
+    acpi_mode = query_acpi_info("\\_SB.PCI0.LPC0.EC0.QCHO");
+    if (strncmp(acpi_mode, "0x0", 4))
+        return (1);
+    return (0);
+}
+
+static int is_bc_on(void)
+{
+    const char *acpi_mode;
+
+    acpi_mode = query_acpi_info("\\_SB.PCI0.LPC0.EC0.BTSM");
+    if (strncmp(acpi_mode, "0x0", 4))
+        return (1);
+    return (0);
+}
+
+static void write_acpi(const char *value)
+{
+  FILE *file;
+  file = fopen("/proc/acpi/call", "w");
+  if (file == NULL) {
+      perror("Error opening /proc/acpi/call");
+      return;
+  }
+  // Write the value to the file
+  if (fprintf(file, "%s", value) < 0) {
+      perror("Error writing to /proc/acpi/call");
+      fclose(file);
+      return;
+  }
+
+  // Close the file
+  fclose(file);
+}
+    
+static void toggle_battery_conservation(int mode)
+{
+    if (mode == 0)
+    {
+        printf("turning off battery conservation\n");
+        write_acpi("\\_SB.PCI0.LPC0.EC0.VPC0.SBMC 0x05");
+    }
+    else if (mode == 1)
+    {
+        printf("turning on battery conservation\n");
+        write_acpi("\\_SB.PCI0.LPC0.EC0.VPC0.SBMC 0x03");
+    }
+}
+
+static void toggle_rapid_charge(int mode)
+{
+    if (mode == 0)
+    {
+        printf("turning off rapid charge\n");
+        write_acpi("\\_SB.PCI0.LPC0.EC0.VPC0.SBMC 0x08");
+    }
+    else if (mode == 1)
+    {
+        printf("turning on rapid charge\n");
+        write_acpi("\\_SB.PCI0.LPC0.EC0.VPC0.SBMC 0x07");
+    }
+}
+static void switch_battery_bc(GtkWidget *widget, gpointer data)
+{
+  g_print ("Battery Conservation toggled\n");
+
+  if (is_bc_on())
+  {
+      toggle_battery_conservation(0);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), is_bc_on());
+      return ;
+    //if both are on only shut down the one being toggled ie bc here
+  }
+  else if (is_rc_on())
+  {
+      toggle_rapid_charge(0);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), is_rc_on());
+      // otherwise we turn it on.
+  }
+  toggle_battery_conservation(1);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), is_bc_on());
+}
+
+static void switch_battery_rc(GtkWidget *widget, gpointer data)
+{
+  g_print ("Rapid Charge toggled\n");
+
+  if (is_rc_on())
+  {
+      toggle_rapid_charge(0);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), is_rc_on());
+      return ;
+    //if both are on only shut down the one being toggled ie bc here
+  }
+  else if (is_bc_on())
+  {
+      toggle_battery_conservation(0);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), is_bc_on());
+      // otherwise we turn it on.
+  }
+  toggle_rapid_charge(1);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), is_rc_on());
 }
 
 static void
@@ -193,6 +293,12 @@ activate (GtkApplication *app,
   g_signal_connect (button, "clicked", G_CALLBACK (set_BS), label);
 
   update_PwrMode_text(GTK_LABEL(label));
+  GObject *buttonBC = gtk_builder_get_object (builder, "btnBatteryBC");
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(buttonBC), is_bc_on());
+  GObject *buttonRC = gtk_builder_get_object (builder, "btnBatteryRC");
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(buttonRC), is_rc_on());
+  g_signal_connect (buttonBC, "clicked", G_CALLBACK (switch_battery_bc), buttonRC);
+  g_signal_connect (buttonRC, "clicked", G_CALLBACK (switch_battery_rc), buttonBC);
   //button = gtk_builder_get_object (builder, "quit");
   //g_signal_connect_swapped (button, "clicked", G_CALLBACK (quit_cb), window);
   (void)quit_cb;
@@ -203,8 +309,7 @@ activate (GtkApplication *app,
 }
 
 int
-main (int   argc,
-      char *argv[])
+main (int   argc, char *argv[])
 {
 #ifdef GTK_SRCDIR
   g_chdir (GTK_SRCDIR);
