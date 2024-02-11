@@ -4,7 +4,7 @@ SRCDIR = ./src/
 INCDIR = ./inc/
 OBJ_DIR = ./build/
 
-SRC_NAME =	main.c 
+SRC_NAME =	main.c acpi_access.c battery_management.c pwr_management.c
 
 SRC = $(addprefix $(SRCDIR)/, $(SRC_NAME))
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC_NAME:c=o))

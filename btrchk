@@ -1,2 +1,10 @@
+#!/bin/zsh
+echo "Power Mode: 0 IC 1 EP 2 BS"
 echo '\_SB.PCI0.LPC0.EC0.SPMO' > /proc/acpi/call
+cat /proc/acpi/call; printf '\n'
+echo "Rapid Charge: 0 off 1 on"
+echo '\_SB.PCI0.LPC0.EC0.QCHO' > /proc/acpi/call
+cat /proc/acpi/call; printf '\n'
+echo "Battery Conservation: 0 off 1 on"
+echo '\_SB.PCI0.LPC0.EC0.BTSM' > /proc/acpi/call
 cat /proc/acpi/call; printf '\n'
