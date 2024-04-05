@@ -5,12 +5,14 @@ PowerManager for Lenovo Ideapad is an application designed to provide users with
 
 ## Installation
 *(Installation instructions will be provided here once available)*
+I'm still figuring out how to package it but it can be compiled with the make command.
 
 ## Usage
 Simply launch the application and navigate through the intuitive user interface to access performance modes and battery settings. Customize your device's power management to suit your requirements effortlessly.
 
 ## Contributing
 Contributions to PowerManager for Lenovo Ideapad are welcome!
+Feedback or suggestions are highly appreciated.
 ## Credits
 GUI made with GTK 4.0. https://www.gtk.org/ - LGPL 2.1 or newer.
 This project draws inspiration from the original Lenovo Vantage application and acknowledges the valuable information provided by the Arch Linux Wiki.
