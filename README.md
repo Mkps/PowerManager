@@ -19,4 +19,4 @@ This project draws inspiration from the original Lenovo Vantage application and 
 This project currently does not have a specific license.
 
 ## Contact
-For any inquiries or feedback, feel free to reach out to the project maintainer at aloubier@student.42.fr. Your input is highly appreciated!
+For any inquiries or feedback, feel free to reach out at aloubier@student.42.fr. Your input is highly appreciated!
