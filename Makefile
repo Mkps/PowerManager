@@ -18,18 +18,19 @@ LDFLAGS = `pkg-config --libs gtk4`
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	@echo "Compiling $(NAME) in release mode" 
-	$(CC) -o $(NAME) $(OBJ) $(LDFLAGS) 
+$(NAME): release $(OBJ)
+	@$(CC) -o $(NAME) $(OBJ) $(LDFLAGS) 
+	@echo "Done!"
 
+release:
+	@echo "Compiling $(NAME) in release mode..." 
 
 $(OBJ_DIR)/%.o:	$(SRCDIR)/%.c
 	@mkdir -p '$(@D)'
-	@echo $(@D)
-	$(CC) -c $(CFLAGS) $< -o $@
+	@$(CC) -c $(CFLAGS) $< -o $@
 
 debug: fclean $(OBJ)
-	@echo "Compiling $(NAME) in debug mode"
+	@echo "Compiling $(NAME) in debug mode..."
 	$(CC) -o $(NAME) $(OBJ) $(LDFLAGS) 
 
 clean:
