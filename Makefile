@@ -11,20 +11,26 @@ OBJ = $(addprefix $(OBJ_DIR)/, $(SRC_NAME:c=o))
 
 CC = cc
 
-CFLAGS = -pipe -Wall -Wextra -Werror -pedantic `pkg-config --cflags gtk4` -I$(INCDIR)
+debug: CFLAGS = -g3 -pipe -Wall -Wextra -Werror -pedantic `pkg-config --cflags gtk4` -I$(INCDIR)
+$(NAME): CFLAGS = -O2 `pkg-config --cflags gtk4` -I$(INCDIR)
 
 LDFLAGS = `pkg-config --libs gtk4`
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	@echo "Compiling objects..."
+	@echo "Compiling $(NAME) in release mode" 
 	$(CC) -o $(NAME) $(OBJ) $(LDFLAGS) 
+
 
 $(OBJ_DIR)/%.o:	$(SRCDIR)/%.c
 	@mkdir -p '$(@D)'
 	@echo $(@D)
 	$(CC) -c $(CFLAGS) $< -o $@
+
+debug: fclean $(OBJ)
+	@echo "Compiling $(NAME) in debug mode"
+	$(CC) -o $(NAME) $(OBJ) $(LDFLAGS) 
 
 clean:
 	@echo "Cleaning object files..."
