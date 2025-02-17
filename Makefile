@@ -4,17 +4,17 @@ SRCDIR = ./src
 INCDIR = ./inc
 OBJ_DIR = ./build
 
-SRC_NAME =	main.c acpi_access.c battery_management.c pwr_management.c
+SRC_NAME =	main.c acpi_access.c battery_management.c polkit.c pwr_management.c
 
 SRC = $(addprefix $(SRCDIR), $(SRC_NAME))
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC_NAME:c=o))
 
 CC = cc
 
-debug: CFLAGS = -g3 -pipe -Wall -Wextra -Werror -pedantic `pkg-config --cflags gtk4` -I$(INCDIR)
-$(NAME): CFLAGS = -O2 `pkg-config --cflags gtk4` -I$(INCDIR)
+debug: CFLAGS = -g3 -pipe -Wall -Wextra -Werror `pkg-config --cflags gtk4 polkit-gobject-1` -I$(INCDIR) -D DEBUG=1
+$(NAME): CFLAGS = -O2 `pkg-config --cflags gtk4 polkit-gobject-1` -I$(INCDIR)
 
-LDFLAGS = `pkg-config --libs gtk4`
+LDFLAGS = `pkg-config --libs gtk4 polkit-gobject-1`
 
 all: $(NAME)
 

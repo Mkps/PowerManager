@@ -20,8 +20,10 @@ const char	*query_PwrMode_info(void)
 	  free((char *)value);
 	  return ("Battery Saving");
   }
-  else
+  else {
+	  free((char *)value);
 	  return ("Cannot determine Power Mode");
+  }
 }
 
 void update_PwrMode_text(GtkLabel *label)
@@ -105,4 +107,31 @@ void set_PwrMode_BS(GtkWidget *widget, gpointer   data)
   fclose(file);
   update_PwrMode_text(GTK_LABEL(label));
   (void)widget;
+}
+
+int get_power_state(void)
+{
+  const char *value = query_acpi_info(ACPI_INFO);
+  if (!value)
+	  return (0);
+  if (!strncmp("0x0", value, 4))
+  {
+	  free((char *)value);
+	  return (PS_IC_MODE);
+  }
+  else if (!strncmp("0x1", value, 4))
+  {
+	  free((char *)value);
+	  return (PS_EP_MODE);
+  }
+  else if (!strncmp("0x2", value, 4))
+  {
+	  free((char *)value);
+	  return (PS_BC_MODE);
+  }
+  else 
+  {
+	  free((char *)value);
+	  return (0);
+  }
 }
