@@ -5,6 +5,7 @@
 # include <glib/gstdio.h>
 # include <fcntl.h>
 # include <unistd.h>
+# include <string.h>
 
 # define ACPI_INFO "\\_SB.PCI0.LPC0.EC0.SPMO"
 # define ACPI_SET_PWRMODE_IC "\\_SB.PCI0.LPC0.EC0.VPC0.DYTC 0x000FB001"

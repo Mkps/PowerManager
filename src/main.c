@@ -33,6 +33,27 @@ static void activate (GtkApplication *app, gpointer user_data)
   g_object_unref (builder);
 }
 
+int filter_env(const char *str) {
+  if (strstr(str, "DBUS")) 
+    return 1;
+  else if (strstr(str, "XDG")) 
+    return 1;
+  else if (strstr(str, "GTK")) 
+    return 1;
+  else if (strstr(str, "DISPLAY")) 
+    return 1;
+  else if (strstr(str, "LANG")) 
+    return 1;
+  else if (strstr(str, "PATH")) 
+    return 1;
+  else if (strstr(str, "XAUTHORITY")) 
+    return 1;
+  else if (strstr(str, "HOME")) 
+    return 1;
+  else
+    return 0;
+}
+
 int main (int   argc, char *argv[], char **env)
 {
 #ifdef GTK_SRCDIR
@@ -44,10 +65,14 @@ int main (int   argc, char *argv[], char **env)
     exec_args[0] = "pkexec";
     exec_args[1] = "env";
     int i = 0;
-    for (; env[i] && i < 250; ++i) {
-      exec_args[i + 2] = env[i];
+    int j = 2;
+    for (; env[i] && j < 250; ++i) {
+      if (!filter_env(env[i]))
+        continue;
+      exec_args[j] = env[i];
+      j++;
     }
-    exec_args[i + 2] =  "/home/alx/Code/Powermanager/PowerManager";
+    exec_args[j] =  "/home/alx/Code/Powermanager/PowerManager";
     execvp("pkexec", exec_args);
     perror("Failed to execute pkexec");
     return EXIT_FAILURE;
