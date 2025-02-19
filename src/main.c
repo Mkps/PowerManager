@@ -54,35 +54,40 @@ int filter_env(const char *str) {
     return 0;
 }
 
+int run_as_superuser(char **env) 
+{   
+  (void)argv;
+  char *exec_args[256];
+  bzero(exec_args, sizeof(exec_args));
+  exec_args[0] = "pkexec";
+  exec_args[1] = "env";
+  int i = -1;
+  int j = 2;
+  while(env[++i] && j < 250) {
+    if (!filter_env(env[i]))
+      continue;
+    exec_args[j] = env[i];
+    j++;
+  }
+  exec_args[j] =  "/home/alx/Code/Powermanager/PowerManager";
+  execvp("pkexec", exec_args);
+  perror("Failed to execute pkexec");
+  return EXIT_FAILURE;
+}
+
 int main (int   argc, char *argv[], char **env)
 {
 #ifdef GTK_SRCDIR
   g_chdir (GTK_SRCDIR);
 #endif
-  if (geteuid() != 0) {  // If not root, relaunch with pkexec
-    char *exec_args[256];
-    bzero(exec_args, sizeof(exec_args));
-    exec_args[0] = "pkexec";
-    exec_args[1] = "env";
-    int i = 0;
-    int j = 2;
-    for (; env[i] && j < 250; ++i) {
-      if (!filter_env(env[i]))
-        continue;
-      exec_args[j] = env[i];
-      j++;
-    }
-    exec_args[j] =  "/home/alx/Code/Powermanager/PowerManager";
-    execvp("pkexec", exec_args);
-    perror("Failed to execute pkexec");
-    return EXIT_FAILURE;
-  }
+
+  if (geteuid() != 0) { run_as_superuser(env); }
+
   GtkApplication *app = gtk_application_new ("com.mkps.powermanager", G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-
   int status = g_application_run (G_APPLICATION (app), argc, argv);
+
   g_object_unref (app);
 
   return status;
 }
-
