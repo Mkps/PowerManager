@@ -43,3 +43,19 @@ const char	*query_acpi_info(const char *r_value)
   }
   return (value);
 }
+
+int access_acpi(int opcode) {
+  char cmd[256];
+  sprintf(cmd, "pkexec %s %d", HELPER_PATH, opcode);
+  FILE *fp = popen(cmd , "r");
+  if (!fp) {
+      perror("Failed to run pkexec");
+      return -1;
+  }
+  char buffer[256];
+  fgets(buffer, sizeof(buffer), fp); 
+  pclose(fp);
+  if (buffer[0] < '0' && buffer[0] > '9')
+    return (-1);
+  return atoi(buffer);
+}
