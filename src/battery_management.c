@@ -10,7 +10,7 @@ int is_rc_on(void)
     if (!acpi_mode)
     {
         printf("could not query rapid charge status");
-        return (ret);
+        return (-1);
     }
     if (strncmp(acpi_mode, "0x0", 4))
         ret = 1;

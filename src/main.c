@@ -9,20 +9,20 @@ static void activate (GtkApplication *app, gpointer user_data)
 
   /* Connect signal handlers to the constructed widgets. */
   GObject *window = gtk_builder_get_object (builder, "window");
-  // GObject *label = gtk_builder_get_object (builder, "currentPwrMode");
+  GObject *label = gtk_builder_get_object (builder, "currentPwrMode");
   gtk_window_set_default_size(GTK_WINDOW(window), 300, 100);
   gtk_window_set_application (GTK_WINDOW (window), app);
 
-  // GObject *button = gtk_builder_get_object (builder, "btnIntelligentCooling");
-  // g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_IC), label);
-  //
-  // button = gtk_builder_get_object (builder, "btnExtremePerformance");
-  // g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_EP), label);
-  //
-  // button = gtk_builder_get_object (builder, "btnBatterySaving");
-  // g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_BS), label);
-  //
-  // update_PwrMode_text(GTK_LABEL(label));
+  GObject *button = gtk_builder_get_object (builder, "btnIntelligentCooling");
+  g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_IC), label);
+
+  button = gtk_builder_get_object (builder, "btnExtremePerformance");
+  g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_EP), label);
+
+  button = gtk_builder_get_object (builder, "btnBatterySaving");
+  g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_BS), label);
+
+  update_PwrMode_text(GTK_LABEL(label));
   GObject *buttonBC = gtk_builder_get_object (builder, "btnBatteryBC");
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(buttonBC), access_acpi(ACPI_CHK_BC));
   GObject *buttonRC = gtk_builder_get_object (builder, "btnBatteryRC");

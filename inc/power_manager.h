@@ -25,7 +25,11 @@
 # define ACPI_CHK_PWR 5
 # define ACPI_SET_IC 6
 # define ACPI_SET_EP 7
-# define ACPI_SET_BC 8
+# define ACPI_SET_BS 8
+
+# define PWR_MODE_IC 1
+# define PWR_MODE_EP 2
+# define PWR_MODE_BS 3
 
 # define HELPER_PATH "/home/alx/Code/Powermanager/acpi_helper"
 
@@ -42,6 +46,8 @@ void        update_PwrMode_text(GtkLabel *label);
 void        set_PwrMode_IC(GtkWidget *widget, gpointer data);
 void        set_PwrMode_EP(GtkWidget *widget, gpointer data);
 void        set_PwrMode_BS(GtkWidget *widget, gpointer data);
+int         acpi_query_pwrstatus(void); 
+int         acpi_setpwr(const char *powerMode);
 
 // battery_management.c
 int         is_rc_on(void);
