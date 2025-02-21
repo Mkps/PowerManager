@@ -6,6 +6,11 @@
 # include <fcntl.h>
 # include <unistd.h>
 # include <string.h>
+# include <sys/socket.h>
+# include <sys/un.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <signal.h>
 
 # define ACPI_INFO "\\_SB.PCI0.LPC0.EC0.SPMO"
 # define ACPI_SET_PWRMODE_IC "\\_SB.PCI0.LPC0.EC0.VPC0.DYTC 0x000FB001"
@@ -32,6 +37,7 @@
 # define PWR_MODE_BS 3
 
 # define HELPER_PATH "/home/alx/Code/Powermanager/acpi_helper"
+# define SOCKET_PATH "/tmp/powerdaemon.sock"
 
 enum e_powerstate {IC = 0, EP, BS};
 

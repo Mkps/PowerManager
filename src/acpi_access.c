@@ -45,17 +45,32 @@ const char	*query_acpi_info(const char *r_value)
 }
 
 int access_acpi(int opcode) {
-  char cmd[256];
-  sprintf(cmd, "pkexec %s %d", HELPER_PATH, opcode);
-  FILE *fp = popen(cmd , "r");
-  if (!fp) {
-      perror("Failed to run pkexec");
+  int sock;
+  struct sockaddr_un server_addr;
+  char cmd[128];
+  bzero(cmd, sizeof(cmd));
+  static char response[256];
+
+  sock = socket(AF_UNIX, SOCK_STREAM, 0);
+  if (sock < 0) {
+      perror("socket");
       return -1;
   }
-  char buffer[256];
-  fgets(buffer, sizeof(buffer), fp); 
-  pclose(fp);
-  if (buffer[0] < '0' && buffer[0] > '9')
+
+  memset(&server_addr, 0, sizeof(server_addr));
+  server_addr.sun_family = AF_UNIX;
+  strncpy(server_addr.sun_path, SOCKET_PATH, sizeof(server_addr.sun_path) - 1);
+
+  if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+      perror("connect");
+      close(sock);
+      return -1;
+  }
+  sprintf(cmd, "%d", opcode);
+  write(sock, cmd, strlen(cmd));
+  read(sock, response, sizeof(response) - 1);
+  close(sock);
+  if (response[0] < '0' && response[0] > '9')
     return (-1);
-  return atoi(buffer);
+  return atoi(response);
 }
