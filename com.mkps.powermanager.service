@@ -1,0 +1,6 @@
+[D-Bus Service]
+Name=com.mkps.powermanager
+Exec=/home/alx/Code/Powermanager/PowermanagerDbus
+User=root
+SystemdService=powermanager.service
+

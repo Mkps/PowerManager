@@ -1,4 +1,5 @@
 #include "power_manager.h"
+#include "powermanager-dbus.h"
 
 void write_acpi(const char *value)
 {
@@ -44,33 +45,13 @@ const char	*query_acpi_info(const char *r_value)
   return (value);
 }
 
-int access_acpi(int opcode) {
-  int sock;
-  struct sockaddr_un server_addr;
-  char cmd[128];
-  bzero(cmd, sizeof(cmd));
-  static char response[256];
-
-  sock = socket(AF_UNIX, SOCK_STREAM, 0);
-  if (sock < 0) {
-      perror("socket");
-      return -1;
+int access_acpi(Powermanager* proxy, int opcode) {
+  int response;
+  GError *error = NULL;
+  if (powermanager_call_execute_command_sync(proxy, (gint)opcode, (gint*)&response, NULL, &error)) {
+    return (response);
+  } else {
+    fprintf(stderr, "error: failed connecting to execute command with code %i: %s\n", opcode, error->message);
   }
-
-  memset(&server_addr, 0, sizeof(server_addr));
-  server_addr.sun_family = AF_UNIX;
-  strncpy(server_addr.sun_path, SOCKET_PATH, sizeof(server_addr.sun_path) - 1);
-
-  if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-      perror("connect");
-      close(sock);
-      return -1;
-  }
-  sprintf(cmd, "%d", opcode);
-  write(sock, cmd, strlen(cmd));
-  read(sock, response, sizeof(response) - 1);
-  close(sock);
-  if (response[0] < '0' && response[0] > '9')
-    return (-1);
-  return atoi(response);
+  return (response);
 }

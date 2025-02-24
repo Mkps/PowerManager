@@ -2,6 +2,7 @@
 #include <signal.h>
 
 int g_server_fd;
+int g_continue = 1;
 
 void cleanup (int sig) {
   (void)sig;
@@ -13,6 +14,10 @@ void cleanup (int sig) {
 int execute_action(int opcode) {
   int status = 0;
   switch (opcode) {
+    case ACPI_SHUTDOWN:
+      g_continue = 0;
+      status = 0;
+      break;
     case ACPI_CHK_BC:
       status = is_bc_on();
       break;
@@ -79,7 +84,7 @@ int server_daemon(void) {
   g_server_fd = socket(AF_UNIX, SOCK_STREAM, 0);
   if (g_server_fd < 0) {
       perror("error: failed to initialize socket:");
-      return EXIT_FAILURE;
+      return(EXIT_FAILURE);
   }
 
   memset(&server_addr, 0, sizeof(server_addr));
@@ -88,7 +93,7 @@ int server_daemon(void) {
 
   if (bind(g_server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
       perror("error: failed to bind socket:");
-      return EXIT_FAILURE;
+      return(EXIT_FAILURE);
   }
 
   chmod(SOCKET_PATH, 0666);
@@ -96,14 +101,17 @@ int server_daemon(void) {
 
   printf("Daemon running, waiting for connections...\n");
 
-  while (1) {
+  while (g_continue) {
       client_sock = accept(g_server_fd, NULL, NULL);
       if (client_sock >= 0) {
           handle_acpi_request(client_sock);
       }
   }
+  printf("Shutting down daemon...\n");
+
   close(g_server_fd);
   unlink(SOCKET_PATH);
+  return(EXIT_SUCCESS);
 }
 
 int main (int ac, char **av) {
@@ -114,7 +122,6 @@ int main (int ac, char **av) {
   signal(SIGTERM, cleanup);
   signal(SIGUSR1, cleanup);
 
-  printf("SIGUSR1 %d\n", SIGUSR1);
   if (geteuid() != 0) {
     fprintf(stderr, "Fatal: Not SuperUser\n");
     return (EXIT_FAILURE);

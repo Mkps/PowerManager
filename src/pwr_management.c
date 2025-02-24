@@ -23,9 +23,9 @@ int acpi_query_pwrstatus(void) {
 	  return (-1);
 }
 
-const char	*query_PwrMode_info(void)
+const char	*query_PwrMode_info(Powermanager *proxy)
 {
-  int mode = access_acpi(ACPI_CHK_PWR);
+  int mode = access_acpi(proxy, ACPI_CHK_PWR);
   switch (mode) {
     case PWR_MODE_IC:
 	    return ("Intelligent Cooling");
@@ -60,37 +60,37 @@ int acpi_setpwr(const char *powerMode) {
   return (0);
 }
 
-void update_PwrMode_text(GtkLabel *label)
+void update_PwrMode_text(t_app_data *data)
 {
-    gtk_label_set_text(label, query_PwrMode_info());
+    gtk_label_set_text(GTK_LABEL(data->label), query_PwrMode_info(data->proxy));
 }
 
 void set_PwrMode_IC(GtkWidget *widget, gpointer data)
 {
   (void)widget;
-  GObject *label = (GObject *)data;
-  int status = access_acpi(ACPI_SET_IC);
+  t_app_data *app_data = (t_app_data *)data;
+  int status = access_acpi(app_data->proxy, ACPI_SET_IC);
   if (!status)
     g_print ("Intelligent Cooling Mode Activated\n");
-  update_PwrMode_text(GTK_LABEL(label));
+  update_PwrMode_text(app_data);
 }
 
 void set_PwrMode_EP(GtkWidget *widget, gpointer   data)
 {
   (void)widget;
-  GObject *label = (GObject *)data;
-  int status = access_acpi(ACPI_SET_EP);
+  t_app_data *app_data = (t_app_data *)data;
+  int status = access_acpi(app_data->proxy, ACPI_SET_EP);
   if (!status)
     g_print ("Extreme Performance Mode Activated\n");
-  update_PwrMode_text(GTK_LABEL(label));
+  update_PwrMode_text(app_data);
 }
 
 void set_PwrMode_BS(GtkWidget *widget, gpointer   data)
 {
   (void)widget;
-  GObject *label = (GObject *)data;
-  int status = access_acpi(ACPI_SET_BS);
+  t_app_data *app_data = (t_app_data *)data;
+  int status = access_acpi(app_data->proxy, ACPI_SET_BS);
   if (!status)
     g_print ("Battery Saving mode activated\n");
-  update_PwrMode_text(GTK_LABEL(label));
+  update_PwrMode_text(app_data);
 }
