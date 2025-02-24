@@ -54,14 +54,12 @@ static void activate (GtkApplication *app, gpointer user_data)
   data->label = label;
   button = gtk_builder_get_object(builder, "btn_intelligent_cooling");
   g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_IC), data);
-
   button = gtk_builder_get_object(builder, "btn_extreme_performance");
   g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_EP), data);
-
   button = gtk_builder_get_object(builder, "btn_battery_saving");
   g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_BS), data);
-
   update_PwrMode_text(data);
+
   GObject *buttonBC = gtk_builder_get_object(builder, "toggle_battery_conservation");
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(buttonBC), access_acpi(data->proxy, ACPI_CHK_BC));
   GObject *buttonRC = gtk_builder_get_object(builder, "toggle_rapid_charge");
@@ -70,29 +68,10 @@ static void activate (GtkApplication *app, gpointer user_data)
   g_signal_connect(buttonBC, "clicked", G_CALLBACK (switch_battery_bc), data);
   data->buttonBC = buttonBC;
   g_signal_connect(buttonRC, "clicked", G_CALLBACK (switch_battery_rc), data);
-  gtk_widget_set_visible(GTK_WIDGET (window), TRUE);
-  g_object_unref (builder);
-}
 
-int filter_env(const char *str) {
-  if (strstr(str, "DBUS")) 
-    return 1;
-  else if (strstr(str, "XDG")) 
-    return 1;
-  else if (strstr(str, "GTK")) 
-    return 1;
-  else if (strstr(str, "DISPLAY")) 
-    return 1;
-  else if (strstr(str, "LANG")) 
-    return 1;
-  else if (strstr(str, "PATH")) 
-    return 1;
-  else if (strstr(str, "XAUTHORITY")) 
-    return 1;
-  else if (strstr(str, "HOME")) 
-    return 1;
-  else
-    return 0;
+  gtk_widget_set_visible(GTK_WIDGET (window), TRUE);
+
+  g_object_unref (builder);
 }
 
 int main (int   argc, char *argv[])
