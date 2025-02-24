@@ -1,4 +1,5 @@
 #include "power_manager.h"
+#include "powermanager-dbus.h"
 
 void write_acpi(const char *value)
 {
@@ -42,4 +43,15 @@ const char	*query_acpi_info(const char *r_value)
 	  return (NULL);
   }
   return (value);
+}
+
+int access_acpi(Powermanager* proxy, int opcode) {
+  int response;
+  GError *error = NULL;
+  if (powermanager_call_execute_command_sync(proxy, (gint)opcode, (gint*)&response, NULL, &error)) {
+    return (response);
+  } else {
+    fprintf(stderr, "error: failed connecting to execute command with code %i: %s\n", opcode, error->message);
+  }
+  return (response);
 }

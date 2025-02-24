@@ -1,5 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 0.16.0 -->
 <interface>
   <!-- interface-name builder.ui -->
   <requires lib="gtk" version="4.12"/>
@@ -11,7 +10,7 @@
         <property name="column-spacing">5</property>
         <property name="row-spacing">5</property>
         <child>
-          <object class="GtkLabel" id="pwrcnflabel">
+          <object class="GtkLabel" id="power_mode_configuration">
             <property name="justify">center</property>
             <property name="label">Power Mode Configuration</property>
             <property name="use-underline">True</property>
@@ -24,7 +23,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="pwrstatelabel">
+          <object class="GtkLabel" id="current_mode_label">
             <property name="label">Current Power Mode:</property>
             <property name="visible">1</property>
             <layout>
@@ -34,8 +33,8 @@
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="currentPwrMode">
-            <property name="label">Current Power Mode:</property>
+          <object class="GtkLabel" id="current_mode">
+            <property name="label"></property>
             <property name="visible">1</property>
             <layout>
               <property name="column">1</property>
@@ -44,7 +43,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="btnIntelligentCooling">
+          <object class="GtkButton" id="btn_intelligent_cooling">
             <property name="hexpand">True</property>
             <property name="label">Intelligent Cooling</property>
             <layout>
@@ -54,7 +53,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="btnExtremePerformance">
+          <object class="GtkButton" id="btn_extreme_performance">
             <property name="label">Extreme Performance</property>
             <layout>
               <property name="column">1</property>
@@ -63,7 +62,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="btnBatterySaving">
+          <object class="GtkButton" id="btn_battery_saving">
             <property name="label">Battery Saving</property>
             <layout>
               <property name="column">2</property>
@@ -72,7 +71,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="battery_cnf_label">
+          <object class="GtkLabel" id="battery_configuration">
             <property name="justify">center</property>
             <property name="label">Battery Configuration</property>
             <property name="use-underline">True</property>
@@ -98,7 +97,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkToggleButton" id="btnBatteryBC">
+          <object class="GtkToggleButton" id="toggle_battery_conservation">
             <property name="label">Battery Conservation</property>
             <layout>
               <property name="column">1</property>
@@ -107,7 +106,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkToggleButton" id="btnBatteryRC">
+          <object class="GtkToggleButton" id="toggle_rapid_charge">
             <property name="label">Rapid Charge</property>
             <layout>
               <property name="column">2</property>
