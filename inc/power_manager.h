@@ -37,9 +37,6 @@
 # define PWR_MODE_EP 2
 # define PWR_MODE_BS 3
 
-# define HELPER_PATH "/home/alx/Code/Powermanager/acpi_helper"
-# define SOCKET_PATH "/tmp/powerdaemon.sock"
-
 enum e_powerstate {IC = 0, EP, BS};
 
 typedef struct e_app_data {
