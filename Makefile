@@ -40,7 +40,7 @@ $(OBJ_DIR)/%.o:	$(SRCDIR)/%.c
 
 debug: fclean $(OBJ)
 	@echo "Compiling $(NAME) in debug mode..."
-	$(CC) -o $(NAME) $(OBJ) $(LDFLAGS) 
+	$(CC) -DDEBUG=1 -o $(NAME) $(OBJ) $(LDFLAGS) 
 
 clean:
 	@echo "Cleaning object files..."

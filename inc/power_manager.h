@@ -33,6 +33,10 @@
 # define ACPI_SET_EP 7
 # define ACPI_SET_BS 8
 
+#ifndef DEBUG
+# define DEBUG 0
+#endif
+
 # define PWR_MODE_IC 1
 # define PWR_MODE_EP 2
 # define PWR_MODE_BS 3

@@ -50,7 +50,6 @@ gint execute_action(gint opcode) {
       status = -1;
       break;
   }
-  printf("We return %i\n", status);
   return (gint)status;
 }
 
@@ -445,10 +444,12 @@ main (int argc, char *argv[])
    * the introspection data structures - so we just build
    * them from XML.
    */
-  printf("start\n");
   introspection_data = g_dbus_node_info_new_for_xml (introspection_xml, NULL);
+  if (geteuid() != 0) {
+    fprintf(stderr, "Error: EUID is not root\n");
+    exit(EXIT_FAILURE);
+  }
   g_assert (introspection_data != NULL);
-  printf("assert\n");
 
   owner_id = g_bus_own_name (G_BUS_TYPE_SYSTEM,
                              "com.mkps.powermanager",
@@ -458,19 +459,12 @@ main (int argc, char *argv[])
                              on_name_lost,
                              NULL,
                              NULL);
-  printf("bus\n");
-
-  printf("loop1\n");
   loop = g_main_loop_new (NULL, FALSE);
-  printf("loop2\n");
-  g_main_loop_run (loop);
-  printf("loop3\n");
+  g_main_loop_run(loop);
 
   g_bus_unown_name (owner_id);
-  printf("unown\n");
 
   g_dbus_node_info_unref (introspection_data);
-  printf("unref\n");
 
   return 0;
 }

@@ -41,6 +41,10 @@ static void activate (GtkApplication *app, gpointer user_data)
 
   data->proxy = get_dbus_proxy();
   if (!data->proxy) return;
+  if (access_acpi(data->proxy, ACPI_CHK_PWR)) {
+    fprintf(stderr, "Critical Error: could not get acpi data from dbus\n");
+    return;
+  }
 
   GtkBuilder *builder = gtk_builder_new();
   gtk_builder_add_from_file(builder, "/home/alx/Code/Powermanager/src/builder.ui", NULL);
@@ -50,7 +54,6 @@ static void activate (GtkApplication *app, gpointer user_data)
   GObject *label = gtk_builder_get_object(builder, "current_mode");
   gtk_window_set_default_size(GTK_WINDOW(window), 300, 100);
   gtk_window_set_application (GTK_WINDOW (window), app);
-
   data->label = label;
   button = gtk_builder_get_object(builder, "btn_intelligent_cooling");
   g_signal_connect (button, "clicked", G_CALLBACK (set_PwrMode_IC), data);

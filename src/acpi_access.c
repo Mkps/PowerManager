@@ -51,7 +51,10 @@ int access_acpi(Powermanager* proxy, int opcode) {
   if (powermanager_call_execute_command_sync(proxy, (gint)opcode, (gint*)&response, NULL, &error)) {
     return (response);
   } else {
-    fprintf(stderr, "error: failed connecting to execute command with code %i: %s\n", opcode, error->message);
+    if (DEBUG) {
+      fprintf(stderr, "error: failed connecting to execute command with code %i: %s\n", opcode, error->message);
+    }
+    return (-1);
   }
   return (response);
 }
