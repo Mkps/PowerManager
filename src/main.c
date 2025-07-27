@@ -41,7 +41,7 @@ static void activate (GtkApplication *app, gpointer user_data)
 
   data->proxy = get_dbus_proxy();
   if (!data->proxy) return;
-  if (access_acpi(data->proxy, ACPI_CHK_PWR)) {
+  if (access_acpi(data->proxy, ACPI_CHK_PWR) < 0) {
     fprintf(stderr, "Critical Error: could not get acpi data from dbus\n");
     return;
   }
